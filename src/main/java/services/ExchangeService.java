@@ -57,94 +57,90 @@ public class ExchangeService {
     Exchange lowestExchange;
 
     public ExchangeService() {
-        exchangesList = new ArrayList<Exchange>();
+        this.exchangesList = getExchangesList();
+    }
 
-        Exchange anxv2          = ExchangeFactory.INSTANCE.createExchange(ANXExchange.class.getName());
-        Exchange binance        = ExchangeFactory.INSTANCE.createExchange(BinanceExchange.class.getName());
-        Exchange bitbay         = ExchangeFactory.INSTANCE.createExchange(BitbayExchange.class.getName());
-        //Exchange bitcointoyou   = ExchangeFactory.INSTANCE.createExchange(BitcointoyouExchange.class.getName());
-        Exchange bitfinex       = ExchangeFactory.INSTANCE.createExchange(BitfinexExchange.class.getName());
-        Exchange bitstamp       = ExchangeFactory.INSTANCE.createExchange(BitstampExchange.class.getName());
-        Exchange bittrex        = ExchangeFactory.INSTANCE.createExchange(BittrexExchange.class.getName());
-        Exchange bleutrade      = ExchangeFactory.INSTANCE.createExchange(BleutradeExchange.class.getName());
-        Exchange btcchina       = ExchangeFactory.INSTANCE.createExchange(BTCChinaExchange.class.getName());
-        //Exchange bter           = ExchangeFactory.INSTANCE.createExchange(BTERExchange.class.getName());
-        Exchange campbx         = ExchangeFactory.INSTANCE.createExchange(CampBXExchange.class.getName());
-        Exchange cexio          = ExchangeFactory.INSTANCE.createExchange(CexIOExchange.class.getName());
-        //Exchange clevercoin     = ExchangeFactory.INSTANCE.createExchange(CleverCoinExchange.class.getName());
-        Exchange coinbase       = ExchangeFactory.INSTANCE.createExchange(CoinbaseExchange.class.getName());
-        Exchange coinfloor      = ExchangeFactory.INSTANCE.createExchange(CoinfloorExchange.class.getName());
-        Exchange coinmate       = ExchangeFactory.INSTANCE.createExchange(CoinmateExchange.class.getName());
-        //Exchange coinsetter     = ExchangeFactory.INSTANCE.createExchange(CoinsetterExchange.class.getName());
-        //Exchange cointrader     = ExchangeFactory.INSTANCE.createExchange(CointraderExchange.class.getName());
-        Exchange cryptofacilities = ExchangeFactory.INSTANCE.createExchange(CryptoFacilitiesExchange.class.getName());
-        //Exchange cryptsy        = ExchangeFactory.INSTANCE.createExchange(CryptsyExchange.class.getName());
-        Exchange dsx            = ExchangeFactory.INSTANCE.createExchange(DSXExchange.class.getName());
-        Exchange empoex         = ExchangeFactory.INSTANCE.createExchange(EmpoExExchange.class.getName());
-        Exchange gatecoin       = ExchangeFactory.INSTANCE.createExchange(GatecoinExchange.class.getName());
-        Exchange gdax           = ExchangeFactory.INSTANCE.createExchange(GDAXExchange.class.getName());
-        Exchange hitbtc         = ExchangeFactory.INSTANCE.createExchange(HitbtcExchange.class.getName());
-        Exchange huobi          = ExchangeFactory.INSTANCE.createExchange(HuobiExchange.class.getName());
-        Exchange independentreserve = ExchangeFactory.INSTANCE.createExchange(IndependentReserveExchange.class.getName());
-        Exchange itbit          = ExchangeFactory.INSTANCE.createExchange(ItBitExchange.class.getName());
-        Exchange kraken         = ExchangeFactory.INSTANCE.createExchange(KrakenExchange.class.getName());
-        Exchange kucoin         = ExchangeFactory.INSTANCE.createExchange(KucoinExchange.class.getName());
-        Exchange loyalbit       = ExchangeFactory.INSTANCE.createExchange(LoyalbitExchange.class.getName());
-        Exchange mercadobitcoin = ExchangeFactory.INSTANCE.createExchange(MercadoBitcoinExchange.class.getName());
-        //Exchange mexbt          = ExchangeFactory.INSTANCE.createExchange(MeXBTExchange.class.getName());
-        Exchange okcoin         = ExchangeFactory.INSTANCE.createExchange(OkCoinExchange.class.getName());
-        Exchange poloniex       = ExchangeFactory.INSTANCE.createExchange(PoloniexExchange.class.getName());
-        Exchange quoine         = ExchangeFactory.INSTANCE.createExchange(QuoineExchange.class.getName());
-        Exchange ripple         = ExchangeFactory.INSTANCE.createExchange(RippleExchange.class.getName());
-        Exchange taurus         = ExchangeFactory.INSTANCE.createExchange(TaurusExchange.class.getName());
-        Exchange therock        = ExchangeFactory.INSTANCE.createExchange(TheRockExchange.class.getName());
-        Exchange vircurex       = ExchangeFactory.INSTANCE.createExchange(VircurexExchange.class.getName());
+    public ArrayList<Exchange> getExchangesList() {
+        ArrayList<Exchange> exchangesList = new ArrayList<Exchange>();
 
-        exchangesList.add(anxv2);
-        exchangesList.add(binance);
-        exchangesList.add(bitbay);
-        //exchangesList.add(bitcointoyou);
-        exchangesList.add(bitfinex);
-        exchangesList.add(bitstamp);
-        exchangesList.add(bittrex);
-        exchangesList.add(bleutrade);
-        exchangesList.add(btcchina);
-        //exchangesList.add(bter);
-        exchangesList.add(campbx);
-        exchangesList.add(cexio);
-        //exchangesList.add(clevercoin);
-        exchangesList.add(coinbase);
-        exchangesList.add(coinfloor);
-        exchangesList.add(coinmate);
-        //exchangesList.add(coinsetter);
-        //exchangesList.add(cointrader);
-        exchangesList.add(cryptofacilities);
-        //exchangesList.add(cryptsy);
-        exchangesList.add(dsx);
-        exchangesList.add(empoex);
-        exchangesList.add(gatecoin);
-        exchangesList.add(gdax);
-        exchangesList.add(hitbtc);
-        exchangesList.add(huobi);
-        exchangesList.add(independentreserve);
-        exchangesList.add(itbit);
-        exchangesList.add(kraken);
-        exchangesList.add(kucoin);
-        exchangesList.add(loyalbit);
-        exchangesList.add(mercadobitcoin);
-        //exchangesList.add(mexbt);
-        exchangesList.add(okcoin);
-        exchangesList.add(poloniex);
-        exchangesList.add(quoine);
-        exchangesList.add(ripple);
-        exchangesList.add(taurus);
-        exchangesList.add(therock);
-        exchangesList.add(vircurex);
+        Exchange anxv2;    try{ anxv2       = ExchangeFactory.INSTANCE.createExchange(ANXExchange.class.getName()); }       catch (Exception e ){ anxv2 = null;}
+        Exchange binance;  try{ binance     = ExchangeFactory.INSTANCE.createExchange(BinanceExchange.class.getName()); }   catch (Exception e ){ binance = null;}
+        Exchange bitbay;   try{ bitbay      = ExchangeFactory.INSTANCE.createExchange(BitbayExchange.class.getName()); }    catch (Exception e ){ bitbay = null;}
+        Exchange bitfinex; try{ bitfinex    = ExchangeFactory.INSTANCE.createExchange(BitfinexExchange.class.getName()); }  catch (Exception e ){ bitfinex = null;}
+        Exchange bitstamp; try{ bitstamp    = ExchangeFactory.INSTANCE.createExchange(BitstampExchange.class.getName()); }  catch (Exception e ){ bitstamp = null;}
+        Exchange bittrex;  try{ bittrex     = ExchangeFactory.INSTANCE.createExchange(BittrexExchange.class.getName()); }   catch (Exception e ){ bittrex = null;}
+        Exchange bleutrade;try{ bleutrade   = ExchangeFactory.INSTANCE.createExchange(BleutradeExchange.class.getName()); } catch (Exception e ){ bleutrade = null;}
+        Exchange btcchina; try{ btcchina    = ExchangeFactory.INSTANCE.createExchange(BTCChinaExchange.class.getName()); }  catch (Exception e ){ btcchina = null;}
+        Exchange campbx;   try{ campbx      = ExchangeFactory.INSTANCE.createExchange(CampBXExchange.class.getName()); }    catch (Exception e ){ campbx = null;}
+        Exchange cexio;    try{ cexio       = ExchangeFactory.INSTANCE.createExchange(CexIOExchange.class.getName()); }     catch (Exception e ){ cexio = null;}
+        Exchange coinbase; try{ coinbase    = ExchangeFactory.INSTANCE.createExchange(CoinbaseExchange.class.getName()); }  catch (Exception e ){ coinbase = null;}
+        Exchange coinfloor;try{ coinfloor   = ExchangeFactory.INSTANCE.createExchange(CoinfloorExchange.class.getName()); } catch (Exception e ){ coinfloor = null;}
+        Exchange coinmate; try{ coinmate    = ExchangeFactory.INSTANCE.createExchange(CoinmateExchange.class.getName()); }  catch (Exception e ){ coinmate = null;}
+        Exchange dsx;      try{ dsx         = ExchangeFactory.INSTANCE.createExchange(DSXExchange.class.getName()); }       catch (Exception e ){ dsx = null;}
+        Exchange empoex;   try{ empoex      = ExchangeFactory.INSTANCE.createExchange(EmpoExExchange.class.getName()); }    catch (Exception e ){ empoex = null;}
+        Exchange gatecoin; try{ gatecoin    = ExchangeFactory.INSTANCE.createExchange(GatecoinExchange.class.getName()); }  catch (Exception e ){ gatecoin = null;}
+        Exchange gdax;     try{ gdax        = ExchangeFactory.INSTANCE.createExchange(GDAXExchange.class.getName()); }      catch (Exception e ){ gdax = null;}
+        Exchange hitbtc;   try{ hitbtc      = ExchangeFactory.INSTANCE.createExchange(HitbtcExchange.class.getName()); }    catch (Exception e ){ hitbtc = null;}
+        Exchange huobi;    try{ huobi       = ExchangeFactory.INSTANCE.createExchange(HuobiExchange.class.getName()); }     catch (Exception e ){ huobi = null;}
+        Exchange itbit;    try{ itbit       = ExchangeFactory.INSTANCE.createExchange(ItBitExchange.class.getName()); }     catch (Exception e ){ itbit = null;}
+        Exchange kraken;   try{ kraken      = ExchangeFactory.INSTANCE.createExchange(KrakenExchange.class.getName()); }    catch (Exception e ){ kraken = null;}
+        Exchange kucoin;   try{ kucoin      = ExchangeFactory.INSTANCE.createExchange(KucoinExchange.class.getName()); }    catch (Exception e ){ kucoin = null;}
+        Exchange loyalbit; try{ loyalbit    = ExchangeFactory.INSTANCE.createExchange(LoyalbitExchange.class.getName()); }  catch (Exception e ){ loyalbit = null;}
+        Exchange okcoin;   try{ okcoin      = ExchangeFactory.INSTANCE.createExchange(OkCoinExchange.class.getName()); }    catch (Exception e ){ okcoin = null;}
+        Exchange poloniex; try{ poloniex    = ExchangeFactory.INSTANCE.createExchange(PoloniexExchange.class.getName()); }  catch (Exception e ){ poloniex = null;}
+        Exchange ripple;   try{ ripple      = ExchangeFactory.INSTANCE.createExchange(RippleExchange.class.getName()); }    catch (Exception e ){ ripple = null;}
+        Exchange taurus;   try{ taurus      = ExchangeFactory.INSTANCE.createExchange(TaurusExchange.class.getName()); }    catch (Exception e ){ taurus = null;}
+        Exchange therock;  try{ therock     = ExchangeFactory.INSTANCE.createExchange(TheRockExchange.class.getName()); }   catch (Exception e ){ therock = null;}
+        //Exchange vircurex; try{ vircurex    = ExchangeFactory.INSTANCE.createExchange(VircurexExchange.class.getName()); } catch (Exception e ){ vircurex = null;}
+        Exchange cryptofacilities;   try{ cryptofacilities   = ExchangeFactory.INSTANCE.createExchange(CryptoFacilitiesExchange.class.getName()); }     catch (Exception e ){ cryptofacilities = null;}
+        Exchange independentreserve; try{ independentreserve = ExchangeFactory.INSTANCE.createExchange(IndependentReserveExchange.class.getName()); }   catch (Exception e ){ independentreserve = null;}
+        Exchange mercadobitcoin;     try{ mercadobitcoin     = ExchangeFactory.INSTANCE.createExchange(MercadoBitcoinExchange.class.getName()); }       catch (Exception e ){ mercadobitcoin = null;}
 
+        if(anxv2        != null) exchangesList.add(anxv2);
+        if(binance      != null) exchangesList.add(binance);
+        if(bitbay       != null) exchangesList.add(bitbay);
+        if(bitfinex     != null) exchangesList.add(bitfinex);
+        if(bitstamp     != null) exchangesList.add(bitstamp);
+        if(bittrex      != null) exchangesList.add(bittrex);
+        if(bleutrade    != null) exchangesList.add(bleutrade);
+        if(btcchina     != null) exchangesList.add(btcchina);
+        if(campbx       != null) exchangesList.add(campbx);
+        if(cexio        != null) exchangesList.add(cexio);
+        if(coinbase     != null) exchangesList.add(coinbase);
+        if(coinfloor    != null) exchangesList.add(coinfloor);
+        if(coinmate     != null) exchangesList.add(coinmate);
+        if(cryptofacilities     != null) exchangesList.add(cryptofacilities);
+        if(dsx          != null) exchangesList.add(dsx);
+        if(empoex       != null) exchangesList.add(empoex);
+        if(gatecoin         != null) exchangesList.add(gatecoin);
+        if(gdax         != null) exchangesList.add(gdax);
+        if(hitbtc       != null) exchangesList.add(hitbtc);
+        if(huobi        != null) exchangesList.add(huobi);
+        if(independentreserve   != null) exchangesList.add(independentreserve);
+        if(itbit        != null) exchangesList.add(itbit);
+        if(kraken       != null) exchangesList.add(kraken);
+        if(kucoin       != null) exchangesList.add(kucoin);
+        if(loyalbit     != null) exchangesList.add(loyalbit);
+        if(mercadobitcoin   != null) exchangesList.add(mercadobitcoin);
+        if(okcoin       != null) exchangesList.add(okcoin);
+        if(poloniex     != null) exchangesList.add(poloniex);
+        if(ripple       != null) exchangesList.add(ripple);
+        if(taurus       != null) exchangesList.add(taurus);
+        if(therock      != null) exchangesList.add(therock);
+        //if(vircurex     != null) exchangesList.add(vircurex);
+
+        return exchangesList;
 
     }
 
-    public void ScanHighLowExchanges() throws IOException {
+    /**
+     * Scans a list of exchanges and prints the highest and lowest priced exchange for the given currency pair
+     * @param exchangesList
+     * @param currencyPair
+     * @throws IOException
+     */
+
+    public void ScanHighLowExchangesForPair(ArrayList<Exchange> exchangesList, CurrencyPair currencyPair) throws IOException {
 
         MarketDataService marketDataService;
         this.lowestExchange     = null;
@@ -154,30 +150,54 @@ public class ExchangeService {
         Ticker highestTicker    = null;
 
         for (Exchange ex: exchangesList) {
+
+            //If the exchange doesn't support the given pair, skip it.
+            if(!exchangeSupportsCurrency(ex, currencyPair))
+                continue;
+
             System.out.print("Scanning " + ex.getExchangeSpecification().getExchangeName() + " . . . ");
             try {
+
+                //Get the given market last price for the given pair
                 marketDataService = ex.getMarketDataService();
-                currentTicker = marketDataService.getTicker(CurrencyPair.BTC_USD);
+                currentTicker = marketDataService.getTicker(currencyPair);
                 System.out.println(currentTicker.getLast());
+
+                //If it's the first exchange to compare...
                 if(highestExchange == null && lowestExchange == null){
                     lowestExchange  = ex;
                     highestExchange = ex;
                     lowestTicker    = currentTicker;
                     highestTicker   = currentTicker;
-                } else {
-                    if (currentTicker.getLast().compareTo(highestTicker.getLast()) == 1){
+                }
+                    //Compare to the highest and lowest priced exchange and replace them if necessary
+                    else if (currentTicker.getLast().compareTo(highestTicker.getLast()) == 1){
                         highestTicker = currentTicker;
                         highestExchange = ex;
                     } else if (currentTicker.getLast().compareTo(lowestTicker.getLast()) == -1){
                         lowestTicker = currentTicker;
                         lowestExchange = ex;
-                    }
                 }
+
             } catch (Exception e) {
                 System.out.println("N/A");
                 continue;
             }
         }
+    }
+
+    /**
+     * Returns a boolean value indicating if the given exchange suuports the given currency pair.
+     * @param ex - An exchange object
+     * @param currencyPair - A currency pair object
+     * @return true if the currency pair is supported, false if it is not
+     */
+
+    public boolean exchangeSupportsCurrency(Exchange ex, CurrencyPair currencyPair){
+        if(ex.getExchangeMetaData().getCurrencyPairs().containsKey(currencyPair))
+            return true;
+        else
+            return false;
     }
 
     public Exchange getHighestExchange() {
