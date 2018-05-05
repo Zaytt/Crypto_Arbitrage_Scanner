@@ -4,25 +4,18 @@ import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.anx.v2.ANXExchange;
 import org.knowm.xchange.binance.BinanceExchange;
-import org.knowm.xchange.binance.dto.BinanceException;
 import org.knowm.xchange.bitbay.BitbayExchange;
-import org.knowm.xchange.bitcointoyou.BitcointoyouExchange;
 import org.knowm.xchange.bitfinex.v1.BitfinexExchange;
 import org.knowm.xchange.bitstamp.BitstampExchange;
 import org.knowm.xchange.bittrex.BittrexExchange;
 import org.knowm.xchange.bleutrade.BleutradeExchange;
 import org.knowm.xchange.btcchina.BTCChinaExchange;
-import org.knowm.xchange.bter.BTERExchange;
 import org.knowm.xchange.campbx.CampBXExchange;
 import org.knowm.xchange.cexio.CexIOExchange;
-import org.knowm.xchange.clevercoin.CleverCoinExchange;
 import org.knowm.xchange.coinbase.CoinbaseExchange;
 import org.knowm.xchange.coinfloor.CoinfloorExchange;
 import org.knowm.xchange.coinmate.CoinmateExchange;
-import org.knowm.xchange.coinsetter.CoinsetterExchange;
-import org.knowm.xchange.cointrader.CointraderExchange;
 import org.knowm.xchange.cryptofacilities.CryptoFacilitiesExchange;
-import org.knowm.xchange.cryptsy.CryptsyExchange;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dsx.DSXExchange;
 import org.knowm.xchange.dto.marketdata.Ticker;
@@ -37,30 +30,98 @@ import org.knowm.xchange.kraken.KrakenExchange;
 import org.knowm.xchange.kucoin.KucoinExchange;
 import org.knowm.xchange.loyalbit.LoyalbitExchange;
 import org.knowm.xchange.mercadobitcoin.MercadoBitcoinExchange;
-import org.knowm.xchange.mexbt.MeXBTExchange;
 import org.knowm.xchange.okcoin.OkCoinExchange;
 import org.knowm.xchange.poloniex.PoloniexExchange;
-import org.knowm.xchange.quoine.QuoineExchange;
 import org.knowm.xchange.ripple.RippleExchange;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.knowm.xchange.taurus.TaurusExchange;
 import org.knowm.xchange.therock.TheRockExchange;
-import org.knowm.xchange.vircurex.VircurexExchange;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ExchangeService {
+public class ArbitrageScanner {
 
-    ArrayList<Exchange> exchangesList;
-    Exchange highestExchange;
-    Exchange lowestExchange;
+    private ArrayList<Exchange> defaultExchangeList;
+    private ArrayList<Exchange> allExchangesList;
 
-    public ExchangeService() {
-        this.exchangesList = getExchangesList();
+
+    public ArbitrageScanner() {
+        this.defaultExchangeList = this.getDefaultExchangeList();
+        //this.allExchangesList = this.getAllAvailableExchangesList();
     }
 
-    public ArrayList<Exchange> getExchangesList() {
+    /**
+     * Scans a list of exchanges and prints the highest and lowest priced exchange for the given currency pair
+     * @param exchangesList
+     * @param currencyPair
+     * @throws IOException
+     */
+    public Exchange[] getBestArbitrageExchangesForPair(ArrayList<Exchange> exchangesList, CurrencyPair currencyPair) {
+        //An array that will contain the highest and lowest price for a given coin.
+        //[0] is for the highest, [1] for the lowest
+        Exchange[] exchangeArray = new Exchange[2];
+        MarketDataService marketDataService;
+        Ticker currentTicker    = null;
+        Ticker lowestTicker     = null;
+        Ticker highestTicker    = null;
+
+        for (Exchange ex: exchangesList) {
+
+            //If the exchange doesn't support the given pair, skip it.
+            if(!exchangeSupportsCurrency(ex, currencyPair))
+                continue;
+
+            System.out.print("Scanning " + ex.getExchangeSpecification().getExchangeName()
+                    + " for " + currencyPair.toString() + " . . . ");
+            try {
+
+                //Get the given market last price for the given pair
+                marketDataService = ex.getMarketDataService();
+                currentTicker = marketDataService.getTicker(currencyPair);
+                System.out.println(currentTicker.getLast());
+
+                //If it's the first exchange to compare...
+                if(exchangeArray[0] == null && exchangeArray[1] == null){
+                    exchangeArray[0]  = ex;
+                    exchangeArray[1] = ex;
+                    lowestTicker    = currentTicker;
+                    highestTicker   = currentTicker;
+                }
+                //Compare to the highest and lowest priced exchange and replace them if necessary
+                else if (currentTicker.getLast().compareTo(highestTicker.getLast()) == 1){
+                    highestTicker = currentTicker;
+                    exchangeArray[0] = ex;
+                } else if (currentTicker.getLast().compareTo(lowestTicker.getLast()) == -1){
+                    lowestTicker = currentTicker;
+                    exchangeArray[1] = ex;
+                }
+
+
+
+            } catch (Exception e) {
+                System.out.println("N/A");
+                continue;
+            }
+        }
+
+        return exchangeArray;
+    }
+
+    public ArrayList<Exchange> getDefaultExchangeList() {
+        ArrayList<Exchange> exchangesList = new ArrayList<Exchange>();
+        Exchange binance;  try{ binance = ExchangeFactory.INSTANCE.createExchange(BinanceExchange.class.getName()); }   catch (Exception e ){ binance = null;}
+        Exchange bittrex;  try{ bittrex = ExchangeFactory.INSTANCE.createExchange(BittrexExchange.class.getName()); }   catch (Exception e ){ bittrex = null;}
+        Exchange kraken;   try{ kraken  = ExchangeFactory.INSTANCE.createExchange(KrakenExchange.class.getName()); }    catch (Exception e ){ kraken  = null;}
+
+        if(binance  != null) exchangesList.add(binance);
+        if(bittrex  != null) exchangesList.add(bittrex);
+        if(kraken   != null) exchangesList.add(kraken);
+
+        return exchangesList;
+    }
+
+    public ArrayList<Exchange> getAllAvailableExchangesList() {
         ArrayList<Exchange> exchangesList = new ArrayList<Exchange>();
 
         Exchange anxv2;    try{ anxv2       = ExchangeFactory.INSTANCE.createExchange(ANXExchange.class.getName()); }       catch (Exception e ){ anxv2 = null;}
@@ -91,7 +152,6 @@ public class ExchangeService {
         Exchange ripple;   try{ ripple      = ExchangeFactory.INSTANCE.createExchange(RippleExchange.class.getName()); }    catch (Exception e ){ ripple = null;}
         Exchange taurus;   try{ taurus      = ExchangeFactory.INSTANCE.createExchange(TaurusExchange.class.getName()); }    catch (Exception e ){ taurus = null;}
         Exchange therock;  try{ therock     = ExchangeFactory.INSTANCE.createExchange(TheRockExchange.class.getName()); }   catch (Exception e ){ therock = null;}
-        //Exchange vircurex; try{ vircurex    = ExchangeFactory.INSTANCE.createExchange(VircurexExchange.class.getName()); } catch (Exception e ){ vircurex = null;}
         Exchange cryptofacilities;   try{ cryptofacilities   = ExchangeFactory.INSTANCE.createExchange(CryptoFacilitiesExchange.class.getName()); }     catch (Exception e ){ cryptofacilities = null;}
         Exchange independentreserve; try{ independentreserve = ExchangeFactory.INSTANCE.createExchange(IndependentReserveExchange.class.getName()); }   catch (Exception e ){ independentreserve = null;}
         Exchange mercadobitcoin;     try{ mercadobitcoin     = ExchangeFactory.INSTANCE.createExchange(MercadoBitcoinExchange.class.getName()); }       catch (Exception e ){ mercadobitcoin = null;}
@@ -127,63 +187,9 @@ public class ExchangeService {
         if(ripple       != null) exchangesList.add(ripple);
         if(taurus       != null) exchangesList.add(taurus);
         if(therock      != null) exchangesList.add(therock);
-        //if(vircurex     != null) exchangesList.add(vircurex);
 
         return exchangesList;
 
-    }
-
-    /**
-     * Scans a list of exchanges and prints the highest and lowest priced exchange for the given currency pair
-     * @param exchangesList
-     * @param currencyPair
-     * @throws IOException
-     */
-
-    public void ScanHighLowExchangesForPair(ArrayList<Exchange> exchangesList, CurrencyPair currencyPair) throws IOException {
-
-        MarketDataService marketDataService;
-        this.lowestExchange     = null;
-        this.highestExchange    = null;
-        Ticker currentTicker    = null;
-        Ticker lowestTicker     = null;
-        Ticker highestTicker    = null;
-
-        for (Exchange ex: exchangesList) {
-
-            //If the exchange doesn't support the given pair, skip it.
-            if(!exchangeSupportsCurrency(ex, currencyPair))
-                continue;
-
-            System.out.print("Scanning " + ex.getExchangeSpecification().getExchangeName() + " . . . ");
-            try {
-
-                //Get the given market last price for the given pair
-                marketDataService = ex.getMarketDataService();
-                currentTicker = marketDataService.getTicker(currencyPair);
-                System.out.println(currentTicker.getLast());
-
-                //If it's the first exchange to compare...
-                if(highestExchange == null && lowestExchange == null){
-                    lowestExchange  = ex;
-                    highestExchange = ex;
-                    lowestTicker    = currentTicker;
-                    highestTicker   = currentTicker;
-                }
-                    //Compare to the highest and lowest priced exchange and replace them if necessary
-                    else if (currentTicker.getLast().compareTo(highestTicker.getLast()) == 1){
-                        highestTicker = currentTicker;
-                        highestExchange = ex;
-                    } else if (currentTicker.getLast().compareTo(lowestTicker.getLast()) == -1){
-                        lowestTicker = currentTicker;
-                        lowestExchange = ex;
-                }
-
-            } catch (Exception e) {
-                System.out.println("N/A");
-                continue;
-            }
-        }
     }
 
     /**
@@ -198,21 +204,5 @@ public class ExchangeService {
             return true;
         else
             return false;
-    }
-
-    public Exchange getHighestExchange() {
-        return highestExchange;
-    }
-
-    public void setHighestExchange(Exchange highestExchange) {
-        this.highestExchange = highestExchange;
-    }
-
-    public Exchange getLowestExchange() {
-        return lowestExchange;
-    }
-
-    public void setLowestExchange(Exchange lowestExchange) {
-        this.lowestExchange = lowestExchange;
     }
 }
